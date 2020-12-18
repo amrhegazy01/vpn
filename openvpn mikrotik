@@ -1,0 +1,60 @@
+# You want to help the cause, invite me a beer = Quieres ayudar a la causa invitame una cerveza.
+https://www.mercadopago.com.ar/checko...
+
+OpenVPN Server - Mikrotik
+
+Configuración Clientes Linux - Mac - Windows
+
+
+#Certificado Servidor
+/certificate add name=CA-tpl country="AR" state="Buenos Aires" locality="CABA" organization="CNSoluciones" unit="CNSoluciones" common-name="CA" key-size=4096 days-valid=3650 key-usage=crl-sign,key-cert-sign
+/certificate sign CA-tpl ca-crl-host=127.0.0.1 name="CA"
+
+/certificate add name=SERVER-tpl country="AR" state="Buenos Aires" locality="CABA" organization="CNSoluciones" unit="CNSoluciones" common-name="172.15.10.1" key-size=4096 days-valid=1095 key-usage=digital-signature,key-encipherment,tls-server
+/certificate sign SERVER-tpl ca="CA" name="SERVER"
+
+#Certificado Cliente
+/certificate add name=CLIENT-tpl country="AR" state="Buenos Aires" locality="CABA" organization="CNSoluciones" unit="CNSoluciones" common-name="CLIENT" key-size=4096 days-valid=3650 key-usage=tls-client
+/certificate add name=CLIENT1 copy-from="CLIENT-tpl" common-name="CLIENT1"
+/certificate sign CLIENT1 ca="CA" name="CLIENT1"
+
+/certificate export-certificate CA export-passphrase=""
+/certificate export-certificate CLIENT1 export-passphrase="123456789"
+
+#CLIENT WINTENDO... :)
+https://openvpn.net/index.php/open-so...
+
+#CLIENT MACOS
+https://www.sparklabs.com/viscosity/
+
+#CLIENT GNU/Linux Ubuntu
+sudo apt-get install openvpn
+openvpn --config client1.ovpn
+
+#Wallpaper
+http://www.wallpapersxl.com/wallpaper...
+
+#Template client1.ovpn
+client
+dev tun
+proto tcp-client
+remote my-ip-mkt.com
+port 1194
+nobind
+persist-key
+persist-tun
+tls-client
+remote-cert-tls server
+ca ca.crt
+cert client1.crt
+key client1.key
+verb 4
+mute 10
+cipher AES-256-CBC
+auth SHA1
+auth-user-pass secret
+auth-nocache
+;redirect-gateway def1
+
+route 10.0.0.0 255.255.255.0
+route 172.15.10.0 255.255.255.0
